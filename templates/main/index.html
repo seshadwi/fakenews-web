@@ -2,5 +2,16 @@
 
 
 {% block contents %}
-    <h1>Hello World</h1>
+<main class="container">
+    <div class="row vh-100">
+        <div class="col d-flex flex-column justify-content-center align-items-start gap-4">
+            <h1 class="fw-bold">Sistem Prediksi Berita Palsu Menggunakan Machine Learning</h1>
+            <span>Berita palsu yang dapat menyesatkan dan merugikan banyak orang. Mari lebih cerdas dan kritis dalam menyaring informasi yang beredar di media sosial dan internet. Yuk! verifikasi berita anda disini.</span>
+            <a href="{{url_for('.prediction')}}" class="btn btn-primary rounded-pill px-4 fw-bold" role="button">Periksa Berita</a>
+        </div>
+        <div class="col d-flex justify-content-center align-items-center">
+            <h1></h1>
+        </div>
+    </div>
+</main>
 {% endblock contents %}

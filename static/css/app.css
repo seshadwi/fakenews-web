@@ -1,0 +1,13 @@
+body {
+    font-family : 'Source Serif Pro', serif !important; 
+}
+
+main > .container {
+    padding: 60px 15px 0;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #08175c !important;
+    border-color: #08175c !important;
+}
