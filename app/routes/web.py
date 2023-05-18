@@ -1,5 +1,5 @@
 from flask import Blueprint
-from controllers import mainController
+from ..controllers import mainController
 
 blueprint = Blueprint('web', __name__)
 

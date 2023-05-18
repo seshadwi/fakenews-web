@@ -1,5 +1,6 @@
 body {
     font-family : 'Source Serif Pro', serif !important; 
+    background-color: #F6F4F0 !important;
 }
 
 main > .container {
@@ -10,4 +11,8 @@ main > .container {
     color: #fff;
     background-color: #08175c !important;
     border-color: #08175c !important;
+}
+
+.bg-light {
+    background-color: #F6F4F0 !important;
 }
