@@ -10,7 +10,13 @@ SECRET_KEY = os.urandom(32)
 DEBUG = True
 
 # Connect to the MYSQL database
-SQLALCHEMY_DATABASE_URI = 'mysql://root@localhost/fakenews'
+
+HOST = os.environ.get('DB_HOST')
+USER = os.environ.get('DB_USER')
+PASSWORD = os.environ.get('DB_PASSWORD')
+NAME = os.environ.get('DB_NAME')
+
+SQLALCHEMY_DATABASE_URI = 'mysql://%s:%s@%s/%s'%(USER, PASSWORD, HOST, NAME) if PASSWORD is not '' else 'mysql://%s@%s/%s'%(USER, HOST, NAME)
 
 # Turn off the Flask-SQLAlchemy event system and warning
 SQLALCHEMY_TRACK_MODIFICATIONS = False
