@@ -10,11 +10,14 @@
         </div>
         <form class="my-4 d-flex flex-column align-items-center" id="formSearch">
             <div class="form-floating mb-3 w-100">
-                <input type="text" class="form-control" id="floatingInput" name="title" placeholder="name@example.com">
+                <input type="text" class="form-control" id="floatingInput" name="title" placeholder="name@example.com" required>
                 <label for="floatingInput">Masukkan judul berita</label>
             </div>
             <div class="alert alert-danger w-full" id="alertwarn" hidden></div>
-            <button type="submit" class="btn px-4 btn-primary rounded-pill">Klasifikasi Berita</button>
+            <div>
+                <button type="submit" class="btn px-4 btn-primary rounded-pill">Klasifikasi Berita</button>
+                <button type="button" id="syncnews" class="btn px-4 btn-secondary rounded-pill">Perbaharui data berita</button>
+            </div>
         </form>
 
         <div class="card mb-5" id="cardresult" style="display: none;">
@@ -78,6 +81,7 @@
                 data: form.serialize(),
                 beforeSend: () => {
                     $("#cardresult").hide()
+                    $("button[id='syncnews']").attr('disabled', true)
                     $("button[type='submit']").attr('disabled', true)
                     $("button[type='submit']").empty()
                     $("button[type='submit']").append(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...`)
@@ -111,16 +115,47 @@
                     $("button[type='submit']").attr('disabled', false)
                     $("button[type='submit']").empty()
                     $("button[type='submit']").append(`Klasifikasi Berita`)
+                    $("button[id='syncnews']").attr('disabled', false)
                 },
                 error: (err) => {
                     $("#alertwarn").append(err.responseJSON.message)
                     $("#alertwarn").attr('hidden', false)
+                    toastr.error(err.responseJSON.message)
                     $("button[type='submit']").empty()
                     $("button[type='submit']").append(`Klasifikasi Berita`)
                     $("button[type='submit']").attr('disabled', false)
+                    $("button[id='syncnews']").attr('disabled', false)
                 }
             })
             return false
+        })
+
+        $("#syncnews").click((ev) => {
+            ev.preventDefault()
+            $.ajax({
+                url: "{{url_for('api.syncNews')}}",
+                method: "POST",
+                beforeSend: () => {
+                    $("button[id='syncnews']").attr('disabled', true)
+                    $("button[type='submit']").attr('disabled', true)
+                    $("button[id='syncnews']").empty()
+                    $("button[id='syncnews']").append(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...`)
+                },
+                success: (dt) => {
+                    toastr.success(dt.message)
+                    $("button[id='syncnews']").attr('disabled', false)
+                    $("button[type='submit']").attr('disabled', false)
+                    $("button[id='syncnews']").empty()
+                    $("button[id='syncnews']").append(`Perbaharui data berita`)
+                },
+                error: (err) => {
+                    toastr.error("Gagal memperbaharui data berita")
+                    $("button[id='syncnews']").attr('disabled', false)
+                    $("button[type='submit']").attr('disabled', false)
+                    $("button[id='syncnews']").empty()
+                    $("button[id='syncnews']").append(`Perbaharui data berita`)
+                }
+            })
         })
 
     </script>
