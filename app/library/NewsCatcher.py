@@ -1,10 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-import locale
+
+
+def formatDate(date):
+  month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+  listDate = str(date).replace(",", "").split(" ")
+  for i,m in enumerate(month):
+    if m == listDate[0]:
+      listDate[0] = str(i+1)
+
+  return " ".join(listDate)
 
 def catchNews(latestNewsDate = None):
-  locale.setlocale(locale.LC_TIME, ('id', 'UTF-8'))
   datas = [] 
   for page in range(1, 10):
     url = 'https://turnbackhoax.id/' if page == 1 else 'https://turnbackhoax.id/page/'
@@ -15,7 +23,8 @@ def catchNews(latestNewsDate = None):
     ## Loop data items 
     for it in items:
       titleIt = ''.join(it.find('h3', 'entry-title mh-loop-title').text.strip().split('/n'))
-      newsdate = datetime.strptime(str(it.find('span', 'mh-meta-date updated').text), '%B %d, %Y')
+      dateit= str(it.find('span', 'mh-meta-date updated').text)
+      newsdate = datetime.strptime(formatDate(dateit), '%m %d %Y')
       if latestNewsDate != None:
         if latestNewsDate >= newsdate.date():
           isBreaked = latestNewsDate >= newsdate.date()
