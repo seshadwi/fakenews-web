@@ -5,16 +5,162 @@
 <main class="flex-shrink-0">
     <div class="container my-5">
         <div class="d-flex flex-column justify-content-center align-items-center text-center">
-            <h1 class="fw-bold w-50">Sistem Prediksi Berita Palsu Menggunakan Machine Learning</h1>
-            <span>Prediksi berita anda disini.</span>
+            <h1 class="fw-bold w-50">Sistem Klasifikasi Berita Palsu</h1>
+            <span>Klasifikasi berita anda dengan memasukan judul berita pada form, kemudian submit judul anda</span>
         </div>
-        <form class="my-4 d-flex flex-column align-items-center">
+        <form class="my-4 d-flex flex-column align-items-center" id="formSearch">
             <div class="form-floating mb-3 w-100">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <input type="text" class="form-control" id="floatingInput" name="title" placeholder="name@example.com"
+                    required>
                 <label for="floatingInput">Masukkan judul berita</label>
             </div>
-            <button type="submit" class="btn px-4 btn-primary rounded-pill">Klasifikasi Berita</button>
+            <div class="alert alert-danger w-full" id="alertwarn" hidden></div>
+            <div>
+                <button type="submit" class="btn px-4 btn-primary rounded-pill">Klasifikasi Berita</button>
+                <button type="button" id="syncnews" class="btn px-4 btn-secondary rounded-pill">Perbaharui data
+                    berita</button>
+            </div>
         </form>
+
+        <div class="card mb-5" id="cardresult" style="display: none;">
+            <div class="card-header btn-primary">
+                Hasil Klasifikasi
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <h4>Hasil Scraping Berita</h3>
+                            <div class="bg-light p-2 overflow-auto" style="height: 10rem;" id="scrapingeresult">
+                            </div>
+
+                    </li>
+                    <li class="list-group-item">
+                        <h4>Proses Klasifikasi data berita</h3>
+                            <div class="bg-light p-2 overflow-auto" style="height: 10rem;" id="processresult">
+                            </div>
+                    </li>
+                    <li class="list-group-item">
+                        <h4>Hasil Klasifikasi Berita</h3>
+                            <div class="bg-light p-2" id="clasificationresult">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item" id="wupsim">
+                                        <p>Hasil WUP Similarity</p>
+                                        <p class="mb-0"><strong>Judul :</strong> <span id="title"></span></p>
+                                        <p class="mb-0"><strong>Status Berita :</strong> <span id="status"></span></p>
+                                        <p class="mb-0"><strong>Score :</strong> <span id="result"></span></p>
+                                        <p class="mb-0"><strong>Jumlah Kemiripan kata :</strong> <span
+                                                id="similar"></span></p>
+                                    </li>
+                                    <li class="list-group-item" id="pathsim">
+                                        <p>Hasil PATH Similarity</p>
+                                        <p class="mb-0"><strong>Judul :</strong> <span id="title"></span></p>
+                                        <p class="mb-0"><strong>Status Berita :</strong> <span id="status"></span></p>
+                                        <p class="mb-0"><strong>Score :</strong> <span id="result"></span></p>
+                                        <p class="mb-0"><strong>Jumlah Kemiripan kata :</strong> <span
+                                                id="similar"></span></p>
+                                    </li>
+                                </ul>
+                            </div>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
     </div>
 </main>
 {% endblock contents %}
+
+
+{% block scripts %}
+<script>
+    $(document).ready(() => {
+        $("#cardresult").hide()
+    })
+    $("#formSearch").submit((ev) => {
+        ev.preventDefault()
+        const form = $(ev.target)
+        $.ajax({
+            type: "POST",
+            url: "{{url_for('api.identify')}}",
+            data: form.serialize(),
+            beforeSend: () => {
+                $("#cardresult").hide()
+                $("button[id='syncnews']").attr('disabled', true)
+                $("button[type='submit']").attr('disabled', true)
+                $("button[type='submit']").empty()
+                $("button[type='submit']").append(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...`)
+                $("#alertwarn").attr('hidden', true)
+                $("#alertwarn").empty()
+            },
+            success: (dt) => {
+                if (dt.status) {
+                    const scrapreswrap = $("#cardresult").find("#scrapingeresult")
+                    scrapreswrap.empty()
+                    dt.data.scrapdata.map((v) => {
+                        scrapreswrap.append(`<span>[result]${v.title}<span><br>`)
+                    })
+                    const processreswrap = $("#cardresult").find("#processresult")
+                    processreswrap.empty()
+                    dt.data.process.map((v) => {
+                        processreswrap.append(`<span>[processed]${v}<span><br>`)
+                    });
+
+                    ['wupsim', 'pathsim'].map((v) => {
+                        const wrapper = $("#clasificationresult").find(`#${v}`)
+                        const datasim = dt.data.result[v == 'wupsim' ? "WUP" : "PATH"]
+                        const datamatch = dt.data.result[v == 'wupsim' ? "datamatchWUP" : "datamatchPATH"]
+                        wrapper.find("#title").empty().append(datamatch.title)
+                        wrapper.find("#status").empty().append(datamatch.label ? "Fakta" : "Hoax")
+                        wrapper.find("#result").empty().append(datasim.score)
+                        wrapper.find("#similar").empty().append(datasim.totalmatch)
+                    })
+                    $("#cardresult").fadeIn()
+                }
+                $("button[type='submit']").attr('disabled', false)
+                $("button[type='submit']").empty()
+                $("button[type='submit']").append(`Klasifikasi Berita`)
+                $("button[id='syncnews']").attr('disabled', false)
+            },
+            error: (err) => {
+                $("#alertwarn").append(err.responseJSON.message)
+                $("#alertwarn").attr('hidden', false)
+                toastr.error(err.responseJSON.message)
+                $("button[type='submit']").empty()
+                $("button[type='submit']").append(`Klasifikasi Berita`)
+                $("button[type='submit']").attr('disabled', false)
+                $("button[id='syncnews']").attr('disabled', false)
+            }
+        })
+        return false
+    })
+
+    $("#syncnews").click((ev) => {
+        ev.preventDefault()
+        $.ajax({
+            url: "{{url_for('api.syncNews')}}",
+            method: "POST",
+            beforeSend: () => {
+                $("button[id='syncnews']").attr('disabled', true)
+                $("button[type='submit']").attr('disabled', true)
+                $("button[id='syncnews']").empty()
+                $("button[id='syncnews']").append(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...`)
+            },
+            success: (dt) => {
+                toastr.success(dt.message)
+                $("button[id='syncnews']").attr('disabled', false)
+                $("button[type='submit']").attr('disabled', false)
+                $("button[id='syncnews']").empty()
+                $("button[id='syncnews']").append(`Perbaharui data berita`)
+            },
+            error: (err) => {
+                toastr.error("Gagal memperbaharui data berita")
+                $("button[id='syncnews']").attr('disabled', false)
+                $("button[type='submit']").attr('disabled', false)
+                $("button[id='syncnews']").empty()
+                $("button[id='syncnews']").append(`Perbaharui data berita`)
+            }
+        })
+    })
+
+</script>
+{% endblock scripts %}
