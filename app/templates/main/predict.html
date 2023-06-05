@@ -110,7 +110,7 @@
                         const datasim = dt.data.result[v == 'wupsim' ? "WUP" : "PATH"]
                         const datamatch = dt.data.result[v == 'wupsim' ? "datamatchWUP" : "datamatchPATH"]
                         wrapper.find("#title").empty().append(datamatch.title)
-                        wrapper.find("#status").empty().append(datamatch.label ? "Fakta" : "Hoax")
+                        wrapper.find("#status").empty().append(datamatch.label ? "Benar" : "Palsu")
                         wrapper.find("#result").empty().append(datasim.score)
                         wrapper.find("#similar").empty().append(datasim.totalmatch)
                     })
