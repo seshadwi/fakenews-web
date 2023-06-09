@@ -6,7 +6,7 @@ from sqlalchemy import func
 def identify():
     title = flask.request.values.get('title')
     if flask.request.method == "POST":
-        if title != '':
+        if title:
             newsCheck = NewsChecker().checkNews(title)
             return flask.jsonify({
                 'status': True,
@@ -16,8 +16,8 @@ def identify():
         
     return flask.jsonify({
         'status': False,
-        'data': None,
-        'message': "Wrong Method" if title != '' else 'Tolong masukkan judul berita yang akan di klasifikasi'
+        'data': title,
+        'message': "Wrong Method" if title != None else 'Tolong masukkan judul berita yang akan di klasifikasi'
     }), 400
     
 
