@@ -1,6 +1,6 @@
 import flask
 from ..library import NewsCatcher, NewsChecker
-from ..models import News, db
+from ..models import News, db, Results
 from sqlalchemy import func
 
 def identify():
@@ -8,9 +8,12 @@ def identify():
     if flask.request.method == "POST":
         if title:
             newsCheck = NewsChecker().checkNews(title)
+            result = Results(newsCheck)
+            db.session.add(result)
+            db.session.commit()
             return flask.jsonify({
                 'status': True,
-                'data' : newsCheck,
+                'data' : result.to_dict(),
                 'message': "Success identify"
             }), 200
         

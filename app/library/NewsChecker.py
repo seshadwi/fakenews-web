@@ -34,7 +34,7 @@ class NewsChecker():
             wupScore, pathScore = numpy.mean(wup), numpy.mean(wup)
             WUPArr.append({'score': numpy.mean(wup), 'totalmatch' : sum(w != 0 for w in wup)})
             PATHArr.append({'score': numpy.mean(path), 'totalmatch' : sum(w != 0 for w in path)})
-            process.append('judul "%s" dengan nilai WUP :%s dan nilai PATH: %s'%(dt.title, wupScore, pathScore))
+            process.append({'judul': dt.title, 'wupScore':  wupScore, 'pathScore': pathScore})
             
         resultWUP = max(w['score'] for w in WUPArr)
         resultPATH = max(w['score'] for w in PATHArr)
@@ -47,13 +47,13 @@ class NewsChecker():
         elapsedTime = endedtime - startedTime
         return {
             "elapsedtime": round(elapsedTime) / 60,
-            "scrapdata": [ dt.as_dict() for dt in newsData],
-            "process": process,
+            "scrapdata": json.dumps([ dt.to_dict() for dt in newsData]),
+            "process": json.dumps(process),
             "result": {
                 "WUP": WUPArr[resultIndexWup],
                 "PATH": PATHArr[resultIndexPath],
-                "datamatchWUP": dataWUP.as_dict(),
-                "datamatchPATH": dataPATH.as_dict(),
+                "datamatchWUP": json.dumps(dataWUP.to_dict()),
+                "datamatchPATH": json.dumps(dataPATH.to_dict()),
             }
         }
 

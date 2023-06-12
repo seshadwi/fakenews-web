@@ -21,51 +21,6 @@
                     berita</button>
             </div>
         </form>
-
-        <div class="card mb-5" id="cardresult" style="display: none;">
-            <div class="card-header btn-primary">
-                Hasil Klasifikasi
-            </div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <h4>Hasil Scraping Berita</h3>
-                            <div class="bg-light p-2 overflow-auto" style="height: 10rem;" id="scrapingeresult">
-                            </div>
-
-                    </li>
-                    <li class="list-group-item">
-                        <h4>Proses Klasifikasi data berita</h3>
-                            <div class="bg-light p-2 overflow-auto" style="height: 10rem;" id="processresult">
-                            </div>
-                    </li>
-                    <li class="list-group-item">
-                        <h4>Hasil Klasifikasi Berita</h3>
-                            <div class="bg-light p-2" id="clasificationresult">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item" id="wupsim">
-                                        <p>Hasil WUP Similarity</p>
-                                        <p class="mb-0"><strong>Judul :</strong> <span id="title"></span></p>
-                                        <p class="mb-0"><strong>Status Berita :</strong> <span id="status"></span></p>
-                                        <p class="mb-0"><strong>Score :</strong> <span id="result"></span></p>
-                                        <p class="mb-0"><strong>Jumlah Kemiripan kata :</strong> <span
-                                                id="similar"></span></p>
-                                    </li>
-                                    <li class="list-group-item" id="pathsim">
-                                        <p>Hasil PATH Similarity</p>
-                                        <p class="mb-0"><strong>Judul :</strong> <span id="title"></span></p>
-                                        <p class="mb-0"><strong>Status Berita :</strong> <span id="status"></span></p>
-                                        <p class="mb-0"><strong>Score :</strong> <span id="result"></span></p>
-                                        <p class="mb-0"><strong>Jumlah Kemiripan kata :</strong> <span
-                                                id="similar"></span></p>
-                                    </li>
-                                </ul>
-                            </div>
-                    </li>
-                </ul>
-
-            </div>
-        </div>
     </div>
 </main>
 {% endblock contents %}
@@ -94,27 +49,8 @@
             },
             success: (dt) => {
                 if (dt.status) {
-                    const scrapreswrap = $("#cardresult").find("#scrapingeresult")
-                    scrapreswrap.empty()
-                    dt.data.scrapdata.map((v) => {
-                        scrapreswrap.append(`<span>[result]${v.title}<span><br>`)
-                    })
-                    const processreswrap = $("#cardresult").find("#processresult")
-                    processreswrap.empty()
-                    dt.data.process.map((v) => {
-                        processreswrap.append(`<span>[processed]${v}<span><br>`)
-                    });
-
-                    ['wupsim', 'pathsim'].map((v) => {
-                        const wrapper = $("#clasificationresult").find(`#${v}`)
-                        const datasim = dt.data.result[v == 'wupsim' ? "WUP" : "PATH"]
-                        const datamatch = dt.data.result[v == 'wupsim' ? "datamatchWUP" : "datamatchPATH"]
-                        wrapper.find("#title").empty().append(datamatch.title)
-                        wrapper.find("#status").empty().append(datamatch.label ? "Benar" : "Palsu")
-                        wrapper.find("#result").empty().append(datasim.score)
-                        wrapper.find("#similar").empty().append(datasim.totalmatch)
-                    })
-                    $("#cardresult").fadeIn()
+                    const url = "{{url_for('web.details', id=9999)}}".replace(9999, dt.data.id)
+                    window.location.href = url
                 }
                 $("button[type='submit']").attr('disabled', false)
                 $("button[type='submit']").empty()
