@@ -1,0 +1,92 @@
+{% extends 'base/main.html' %}
+
+
+{% block contents %}
+<main class="flex-shrink-0 my-5">
+    <div class="container my-5">
+        <div class="d-flex flex-column justify-content-center align-items-center text-center">
+            <h1 class="fw-bold w-50">Sistem Klasifikasi Berita Palsu</h1>
+            <span>Klasifikasi berita anda dengan memasukan judul berita pada form, kemudian submit judul anda</span>
+        </div>
+        <hr>
+        <div class="card mb-5" id="cardresult">
+            <div class="card-header btn-primary">
+                Hasil Klasifikasi
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <h4>Hasil Scraping Berita</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                {% for dt in resultScrab %}
+                                <tr>
+                                    <td>{{loop.index}}</td>
+                                    <td>{{dt.title}}</td>
+                                </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+
+                    </li>
+                    <li class="list-group-item">
+                        <h4>Proses Klasifikasi data berita</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Judul Berita</th>
+                                    <th>Nilai WUP</th>
+                                    <th>Nilai PATH</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                {% for dt in processData %}
+                                <tr>
+                                    <td>{{loop.index}}</td>
+                                    <td>{{dt.judul}}</td>
+                                    <td>{{dt.wupScore}}</td>
+                                    <td>{{dt.pathScore}}</td>
+                                </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="my-5 d-grid gap-2">
+            <a role="button" href="{{url_for("web.details", id=id)}}" class="btn btn-primary">Hasil Klasifikasi</a>
+            <a role="button" href="{{url_for("web.prediction")}}" class="btn btn-secondary">Kembali</a>
+        </div>
+        <br/><br/>
+    </div>
+</main>
+{% endblock contents %}
+
+
+{% block styles %}  
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+{% endblock styles %}
+
+{% block scripts %}  
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(() => {
+        $(".table").DataTable({
+            searching: false
+        })
+    })
+</script>
+{% endblock scripts %}
