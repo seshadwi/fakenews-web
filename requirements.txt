@@ -1,4 +1,5 @@
 alembic==1.10.2
+APScheduler==3.10.1
 beautifulsoup4==4.12.2
 bs4==0.0.1
 certifi==2023.5.7
@@ -28,8 +29,10 @@ Sastrawi==1.0.1
 six==1.16.0
 soupsieve==2.4.1
 SQLAlchemy==2.0.6
+SQLAlchemy-serializer==1.4.1
 tqdm==4.65.0
 typing_extensions==4.5.0
 tzdata==2023.3
+tzlocal==5.0.1
 urllib3==2.0.2
 Werkzeug==2.2.3
