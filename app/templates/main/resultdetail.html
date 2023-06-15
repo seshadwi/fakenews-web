@@ -22,6 +22,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Data</th>
+                                    <th>Url</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -30,6 +31,7 @@
                                 <tr>
                                     <td>{{loop.index}}</td>
                                     <td>{{dt.title}}</td>
+                                    <td><a href="{{dt.url}}">{{dt.url}}</a></td>
                                 </tr>
                                 {% endfor %}
                                 

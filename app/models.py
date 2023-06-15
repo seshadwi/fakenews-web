@@ -4,14 +4,21 @@ from python_translator import Translator
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from nltk import word_tokenize
 from sqlalchemy_serializer import SerializerMixin
+from encoding_tools import TheSoCalledGreatEncoder
 import uuid, json
 
 def steamer_bahasa(text):
   from .library.wordHelper import removeStopWordsIndonesian
   text = " ".join(removeStopWordsIndonesian(word_tokenize(text)))
   factory = StemmerFactory()
-  stemmer = factory.create_stemmer()
+  stemmer = factory.create_stemmer()  
   return "".join(stemmer.stem(text))
+
+def encodeText(text):
+   encoder = TheSoCalledGreatEncoder()
+   encoder.load_str(text)
+   encoder.encode("UTF-8", force_ascii=True)
+   return encoder.encoded_data
 
 class News(db.Model, SerializerMixin):
     __tablename__ = 'news'
@@ -21,16 +28,19 @@ class News(db.Model, SerializerMixin):
     description = db.Column(db.Text)
     newsdate = db.Column(db.Date)
     label = db.Column(db.Boolean)
+    url = db.Column(db.Text)
     createdAt = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updatedAt = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
 
-    def __init__(self, title, description, newsdate, label):
+    def __init__(self, title, description, newsdate, label, url):
+        translate = Translator().translate(steamer_bahasa(title), 'EN', 'ID')
         self.title = title
-        self.title_en = str(Translator().translate(steamer_bahasa(title), 'EN', 'ID'))
+        self.title_en = encodeText(str(translate)).decode('utf-8')
         self.description = description
         self.newsdate = newsdate
         self.label = label
+        self.url = url
     
 
 class Results(db.Model, SerializerMixin):

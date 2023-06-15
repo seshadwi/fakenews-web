@@ -22,6 +22,7 @@
                                     <li class="list-group-item" id="wupsim">
                                         <p>Hasil WUP Similarity</p>
                                         <p class="mb-0"><strong>Judul :</strong> {{result.matchWUP.title}}</p>
+                                        <p class="mb-0"><strong>Link :</strong> <a href="{{result.matchWUP.url}}">{{result.matchWUP.url}}</a></p>
                                         <p class="mb-0"><strong>Status Berita :</strong> {% if result.matchWUP.label %}Benar{% else %}Palsu{% endif %}</p>
                                         <p class="mb-0"><strong>Score :</strong> {{result.scoreWUP.score}}</p>
                                         <p class="mb-0"><strong>Jumlah Kemiripan kata :</strong> {{result.scoreWUP.totalmatch}}</p>
@@ -29,6 +30,7 @@
                                     <li class="list-group-item" id="pathsim">
                                         <p>Hasil PATH Similarity</p>
                                         <p class="mb-0"><strong>Judul :</strong> {{result.matchPATH.title}}</p>
+                                        <p class="mb-0"><strong>Link :</strong> <a href="{{result.matchPATH.url}}">{{result.matchPATH.url}}</a></p>
                                         <p class="mb-0"><strong>Status Berita :</strong> {% if result.matchPATH.label %}Benar{% else %}Palsu{% endif %}</p>
                                         <p class="mb-0"><strong>Score :</strong> {{result.scorePATH.score}}</p>
                                         <p class="mb-0"><strong>Jumlah Kemiripan kata :</strong> {{result.scorePATH.totalmatch}}</p>

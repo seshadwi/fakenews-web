@@ -29,12 +29,6 @@ def syncNews():
     if flask.request.method == "POST":
         latestDate = db.session.query(func.max(News.newsdate)).scalar()
         data = NewsCatcher.catchNews(latestDate)
-        for i, dt in enumerate(data):
-            news = News(dt['title'], dt['description'], dt['date'], dt['label'])
-            db.session.add(news)
-
-        db.session.commit()
-
         return flask.jsonify({
             "status": True,
             "message": "Berhasil memperbarui %s data terbaru" %(len(data)), 
