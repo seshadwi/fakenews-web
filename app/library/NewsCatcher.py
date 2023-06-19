@@ -86,7 +86,7 @@ def catchFromTurnbackhoax(page, latestNewsDate):
 
 def catchNews(latestNewsDate = None):
   datas = [] 
-  for page in range(1, 20):
+  for page in range(1, 10):
     catchFromTurnbackhoax(page, latestNewsDate)
     catchFromKominfo(page, latestNewsDate)
   return datas

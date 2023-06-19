@@ -22,8 +22,10 @@ class NewsChecker():
         sense1 = self.wordDisambiguation(newsTitleProcessed)
         search_terms = newsTitle.split()
         conditions = [News.title.contains(term) for term in search_terms]
-        newsData = News.query.all()
-        
+        newsWhereLike = [ News.title.like('%'+ n +'%') for n in newsTitle.split(' ')]
+        newsData = News.query.filter(or_(*newsWhereLike)).all()
+        if(len(newsData) == 0):
+            newsData = News.query.limit(50).all()
         WUPArr = []
         PATHArr = []
         process = []

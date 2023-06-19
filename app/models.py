@@ -45,10 +45,11 @@ class News(db.Model, SerializerMixin):
 
 class Results(db.Model, SerializerMixin):
   __tablename__='results'
-  id = db.Column(db.String(255), primary_key=True, default=str(uuid.uuid4()))
+  id = db.Column(db.String(255), primary_key=True)
   result = db.Column(db.JSON)
   createdAt = db.Column(db.DateTime(timezone=True), server_default=func.now())
   updatedAt = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
   def __init__(self, result:dict):
+     self.id = str(uuid.uuid4())
      self.result = json.dumps(result)

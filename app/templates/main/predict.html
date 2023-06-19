@@ -58,9 +58,9 @@
                 $("button[id='syncnews']").attr('disabled', false)
             },
             error: (err) => {
-                $("#alertwarn").append(err.responseJSON.message)
+                $("#alertwarn").append(err.responseJSON ? err.responseJSON.message : 'error server side')
                 $("#alertwarn").attr('hidden', false)
-                toastr.error(err.responseJSON.message)
+                toastr.error(err.responseJSON ? err.responseJSON.message : 'error server side')
                 $("button[type='submit']").empty()
                 $("button[type='submit']").append(`Klasifikasi Berita`)
                 $("button[type='submit']").attr('disabled', false)
