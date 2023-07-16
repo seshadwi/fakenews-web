@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from ..models import News, db, Results
 
-
+# Format date digunkanak untuk mengubah nama bulan menjadi angka
 def formatDate(date):
   month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
   listDate = str(date).replace(",", "").split(" ")
@@ -13,9 +13,12 @@ def formatDate(date):
 
   return " ".join(listDate)
 
+# Scraping data dari web kominfo
 def catchFromKominfo(page, latestNewsDate):
   url = 'https://www.kominfo.go.id/content/all/laporan_isu_hoaks'
+  # digunakan untuk request ke url, dan mendapatkan HTMLnya
   req = requests.get(url if page == 1 else "%s?page=%s"%(url, page))
+  # Digunakan untuk parsing data html agar dapat di panggil dengan selector query
   soup = BeautifulSoup(req.text, 'html.parser')
   items = soup.findAll('div', 'content')
   itemsDates = soup.findAll('div', 'data-column')
@@ -29,6 +32,7 @@ def catchFromKominfo(page, latestNewsDate):
       dates = itemsDates[index].find('div', "date")
       month = "-".join(str(dates.text).split(" "))
       dateRender = datetime.strptime(month, '%d-%M-%Y')
+      # Check data terbaru, jika berita yang diambil sudah ada pada database maka tidak akan dimasukkan
       if latestNewsDate != None:
         if latestNewsDate >= dateRender.date():
           isBreaked = latestNewsDate >= dateRender.date()
@@ -40,6 +44,7 @@ def catchFromKominfo(page, latestNewsDate):
         "label": label,
         "url": 'https://www.kominfo.go.id%s'%(url)
       }
+      # Digunkana untuk mengirim data ke database tabel News
       news = News(dt['title'], dt['description'], dt['date'], dt['label'], dt['url'])
       db.session.add(news)
   db.session.commit()
@@ -49,12 +54,15 @@ def catchFromKominfo(page, latestNewsDate):
 
 def catchFromTurnbackhoax(page, latestNewsDate):
   url = 'https://turnbackhoax.id/' if page == 1 else 'https://turnbackhoax.id/page/'
+  # digunakan untuk request ke url, dan mendapatkan HTMLnya
   req = requests.get(url if page == 1 else '%s%s' %(url, page))
+  # Digunakan untuk parsing data html agar dapat di panggil dengan selector query
   soup = BeautifulSoup(req.text, 'html.parser')
   items = soup.findAll('div', 'mh-loop-content mh-clearfix')
   isBreaked = False
   ## Loop data items 
   for it in items:
+    # Check data terbaru, jika berita yang diambil sudah ada pada database maka tidak akan dimasukkan
     titleIt = ''.join(it.find('h3', 'entry-title mh-loop-title').text.strip().split('/n'))
     dateit= str(it.find('span', 'mh-meta-date updated').text)
     newsdate = datetime.strptime(formatDate(dateit), '%m %d %Y')
@@ -76,6 +84,7 @@ def catchFromTurnbackhoax(page, latestNewsDate):
         "label": label,
         "url": urlNews
       }
+    # Digunkana untuk mengirim data ke database tabel News
     news = News(dt['title'], dt['description'], dt['date'], dt['label'], dt['url'])
     
     db.session.add(news)

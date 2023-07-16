@@ -11,6 +11,7 @@ from ..models import News
 class NewsChecker():
 
     def __init__(self):
+        # Download NLTK library
         nltk.download('stopwords')
         nltk.download('wordnet')
         nltk.download('punkt')
@@ -18,19 +19,25 @@ class NewsChecker():
         
     def checkNews(self, newsTitle):
         startedTime = time.time()
+        # Input process digunakan untuk tokenizing 
         newsTitleProcessed = self.inputProcess(newsTitle, True)
+        # Digunakan untuk memproses text berita menjadi array dan check kata yang memiliki makna sama
         sense1 = self.wordDisambiguation(newsTitleProcessed)
         search_terms = newsTitle.split()
         conditions = [News.title.contains(term) for term in search_terms]
+        # Digunakan untuk mendapakan data berita dari database dengan query judul yang hampir sama dengan yang dimasukkan pengguna
         newsWhereLike = [ News.title.like('%'+ n +'%') for n in newsTitle.split(' ')]
         newsData = News.query.filter(or_(*newsWhereLike)).all()
+        # Jika tidak ada, maka akan di ambilkan 50 data berita terbaru
         if(len(newsData) == 0):
             newsData = News.query.limit(50).all()
         WUPArr = []
         PATHArr = []
         process = []
         for i, dt in enumerate(newsData):
+            # Digunakan untuk memproses text berita menjadi array dan check kata yang memiliki makna sama
             sense2 = self.wordDisambiguation(self.inputProcess(dt.title_en))
+            # Digunakan untuk memeriksa antara data dari database dan dari input user dan di ambil nilai WUP dan PATH
             wup = self.resultWUP(sense2, sense1)
             path = self.resultPATH(sense2, sense1)
             wupScore, pathScore = numpy.mean(wup), numpy.mean(wup)
@@ -38,8 +45,10 @@ class NewsChecker():
             PATHArr.append({'score': numpy.mean(path), 'totalmatch' : sum(w != 0 for w in path)})
             process.append({'judul': dt.title, 'wupScore':  wupScore, 'pathScore': pathScore})
             
+        # digunakan data tertinggi dari wup dan path
         resultWUP = max(w['score'] for w in WUPArr)
         resultPATH = max(w['score'] for w in PATHArr)
+        # mendapatkan data berita yang mempunyai score tertinggi
         resultIndexWup = [w['score'] for w in WUPArr].index(resultWUP)
         resultIndexPath = [w['score'] for w in PATHArr].index(resultPATH)
         dataWUP = newsData[resultIndexWup]
@@ -47,6 +56,7 @@ class NewsChecker():
 
         endedtime = time.time()
         elapsedTime = endedtime - startedTime
+        # Digunakan untuk return data ke response json untuk API news Checker
         return {
             "elapsedtime": round(elapsedTime) / 60,
             "scrapdata": json.dumps([ dt.to_dict() for dt in newsData]),

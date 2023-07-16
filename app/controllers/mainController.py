@@ -3,6 +3,7 @@ from ..models import Results
 import json
 
 def index():
+    # render_template digunakan untuk load data html dari templates dan mengirimkan data ke html untuk ditampilkan
     return render_template('main/index.html')
 
 def prediction():

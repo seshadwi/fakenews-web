@@ -20,6 +20,7 @@ def encodeText(text):
    encoder.encode("UTF-8", force_ascii=True)
    return encoder.encoded_data
 
+# Class digunakan untuk mendefinisikan model yang akan digunakan sebagai perantara antara database dan aplikasi
 class News(db.Model, SerializerMixin):
     __tablename__ = 'news'
     id = db.Column(db.Integer, primary_key=True)
@@ -32,7 +33,8 @@ class News(db.Model, SerializerMixin):
     createdAt = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updatedAt = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
-
+    # __init__ berarti constructor function.
+    # Disini jika memanggil class News maka akan mengisi beberapa parameter untuk di simpan pada database
     def __init__(self, title, description, newsdate, label, url):
         translate = Translator().translate(steamer_bahasa(title), 'EN', 'ID')
         self.title = title
@@ -43,6 +45,7 @@ class News(db.Model, SerializerMixin):
         self.url = url
     
 
+# Class digunakan untuk mendefinisikan model yang akan digunakan sebagai perantara antara database dan aplikasi
 class Results(db.Model, SerializerMixin):
   __tablename__='results'
   id = db.Column(db.String(255), primary_key=True)
@@ -50,6 +53,8 @@ class Results(db.Model, SerializerMixin):
   createdAt = db.Column(db.DateTime(timezone=True), server_default=func.now())
   updatedAt = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
+  # __init__ berarti constructor function.
+  # Disini jika memanggil class News maka akan mengisi beberapa parameter untuk di simpan pada database
   def __init__(self, result:dict):
      self.id = str(uuid.uuid4())
      self.result = json.dumps(result)
