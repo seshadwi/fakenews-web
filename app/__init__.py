@@ -1,6 +1,8 @@
 from flask import Flask, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import sys, os
+sys.path.insert(0, os.path.dirname(__file__))
 
 # Membuat instance flask
 app = Flask(__name__)
