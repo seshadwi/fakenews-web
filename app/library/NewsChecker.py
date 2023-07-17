@@ -40,7 +40,7 @@ class NewsChecker():
             # Digunakan untuk memeriksa antara data dari database dan dari input user dan di ambil nilai WUP dan PATH
             wup = self.resultWUP(sense2, sense1)
             path = self.resultPATH(sense2, sense1)
-            wupScore, pathScore = numpy.mean(wup), numpy.mean(wup)
+            wupScore, pathScore = numpy.mean(wup), numpy.mean(path)
             WUPArr.append({'score': numpy.mean(wup), 'totalmatch' : sum(w != 0 for w in wup)})
             PATHArr.append({'score': numpy.mean(path), 'totalmatch' : sum(w != 0 for w in path)})
             process.append({'judul': dt.title, 'wupScore':  wupScore, 'pathScore': pathScore})
