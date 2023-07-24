@@ -27,10 +27,11 @@ class NewsChecker():
         conditions = [News.title.contains(term) for term in search_terms]
         # Digunakan untuk mendapakan data berita dari database dengan query judul yang hampir sama dengan yang dimasukkan pengguna
         newsWhereLike = [ News.title.like('%'+ n +'%') for n in newsTitle.split(' ')]
-        newsData = News.query.filter(or_(*newsWhereLike)).all()
+        # newsData = News.query.filter(or_(*newsWhereLike)).all()
+        newsData = News.query.all()
         # Jika tidak ada, maka akan di ambilkan 50 data berita terbaru
-        if(len(newsData) == 0):
-            newsData = News.query.limit(50).all()
+        # if(len(newsData) == 0):
+        #     newsData = News.query.limit(50).all()
         WUPArr = []
         PATHArr = []
         process = []
