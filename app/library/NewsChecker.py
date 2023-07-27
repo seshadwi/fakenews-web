@@ -28,7 +28,7 @@ class NewsChecker():
         # Digunakan untuk mendapakan data berita dari database dengan query judul yang hampir sama dengan yang dimasukkan pengguna
         newsWhereLike = [ News.title.like('%'+ n +'%') for n in newsTitle.split(' ')]
         # newsData = News.query.filter(or_(*newsWhereLike)).all()
-        newsData = News.query.all()
+        newsData = News.query.order_by(News.newsdate).limit(200).all()
         # Jika tidak ada, maka akan di ambilkan 50 data berita terbaru
         # if(len(newsData) == 0):
         #     newsData = News.query.limit(50).all()
